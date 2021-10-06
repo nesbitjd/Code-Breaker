@@ -18,13 +18,10 @@ jobs:
         go-version: 1.17
 
     - name: Build
-      run: go build -v ./...
+      run: go build -v -o code_breaker cmd/code_breaker/*
 
-    - name: Test
-      run: go test -v ./...
-      
     - name: Build container image
-      run: docker build -t 
+      run: docker build -t registry.digitalocean.com/nesbitjd/codebreaker:$(echo $GITHUB_SHA | head -c7) .
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
@@ -35,4 +32,4 @@ jobs:
       run: doctl registry login --expiry-seconds 600    
       
     - name: Push image to DigitalOcean Container Registry
-      run: docker push registry.digitalocean.com/asb/static-example:$(echo $GITHUB_SHA | head -c7)
+      run: docker push registry.digitalocean.com/nesbitjd/codebreaker:$(echo $GITHUB_SHA | head -c7) .

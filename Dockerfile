@@ -1,5 +1,5 @@
 FROM scratch
 
-COPY codebreaker /codebreaker
+COPY codebreaker /bin/code_breaker
 
-ENTRYPOINT [ "/codebreaker" ]
+ENTRYPOINT [ "/bin/code_breaker" ]

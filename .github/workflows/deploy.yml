@@ -41,4 +41,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: ./.github/workflows/scripts/docker.sh
+        script: sh ./.github/workflows/scripts/docker.sh

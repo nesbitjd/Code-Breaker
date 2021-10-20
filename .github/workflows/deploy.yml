@@ -42,6 +42,5 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: | 
-          pwd
-          ls -la
-          sh ./scripts/docker.sh
+          doctl registry login
+          docker-compose up

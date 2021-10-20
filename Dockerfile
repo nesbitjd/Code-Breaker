@@ -1,5 +1,5 @@
-FROM scratch
+FROM alpine
 
-COPY code_breaker /bin/code_breaker
+COPY ./codebreaker /bin/
 
-ENTRYPOINT [ "/bin/code_breaker" ]
+ENTRYPOINT [ "/bin/codebreaker" ]

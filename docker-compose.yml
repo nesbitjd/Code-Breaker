@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+  server:
+    container_name: server
+    image: registry.digitalocean.com/nesbitjd/codebreaker:latest
+    restart: always
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+
+  # The `postgres` compose service hosts the Postgresql database.
+  #
+  # This component is used for storing data at rest.
+  #
+  # https://www.postgresql.org/
+  postgres:
+    container_name: postgres
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: foobar
+      POSTGRES_USER: postgres
+    ports:
+      - '5432:5432'

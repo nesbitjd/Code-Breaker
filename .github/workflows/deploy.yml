@@ -1,4 +1,4 @@
-name: Go
+name: Deploy
 
 on:
   push:
@@ -33,3 +33,12 @@ jobs:
       
     - name: Push image to DigitalOcean Container Registry
       run: docker push registry.digitalocean.com/nesbitjd/codebreaker:$(echo $GITHUB_SHA | head -c7)
+      
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: whoami

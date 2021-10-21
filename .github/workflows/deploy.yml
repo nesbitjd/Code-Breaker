@@ -42,7 +42,7 @@ jobs:
         port: ${{ secrets.PORT }}
         key: ${{ secrets.KEY }}
         source: "docker-compose.yml"
-        target: "."
+        target: "cmd"
 
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
@@ -53,4 +53,4 @@ jobs:
         port: ${{ secrets.PORT }}
         script: | 
           doctl registry login
-          docker-compose up
+          docker-compose up -d

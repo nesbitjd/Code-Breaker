@@ -53,4 +53,5 @@ jobs:
         port: ${{ secrets.PORT }}
         script: | 
           doctl registry login
+          docker-compose pull
           docker-compose up -d

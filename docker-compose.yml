@@ -10,6 +10,8 @@ services:
       - '8080:8080'
     depends_on:
       - postgres
+    networks:
+      - codebreaker
 
   # The `postgres` compose service hosts the Postgresql database.
   #
@@ -25,3 +27,8 @@ services:
       POSTGRES_USER: postgres
     ports:
       - '5432:5432'
+    networks:
+      - codebreaker
+    
+networks:
+  codebreaker:

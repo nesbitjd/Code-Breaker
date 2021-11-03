@@ -59,7 +59,7 @@ fmt:
 .PHONY: go-build
 go-build:
 	@echo
-	GOOS=linux CGO_ENABLED=0 go build cmd/codebreaker/*
+	GOOS=linux CGO_ENABLED=0 go build -o ./codebreaker cmd/codebreaker/*
 
 .PHONY: docker-build
 docker-build:

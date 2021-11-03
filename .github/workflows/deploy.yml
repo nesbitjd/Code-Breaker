@@ -18,10 +18,10 @@ jobs:
         go-version: 1.17
 
     - name: Build
-      run: CGO_ENABLED=0 GOOS=linux go build -v -o codebreaker cmd/codebreaker/*
+      run: make go-build
 
     - name: Build container image
-      run: docker build -t registry.digitalocean.com/nesbitjd/codebreaker:latest .
+      run: make docker-build
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
@@ -41,7 +41,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         port: ${{ secrets.PORT }}
         key: ${{ secrets.KEY }}
-        source: "docker-compose.yml"
+        source: "docker-compose.yml,Makefile"
         target: "cmd"
 
     - name: executing remote ssh commands using ssh key
@@ -53,5 +53,5 @@ jobs:
         port: ${{ secrets.PORT }}
         script: | 
           doctl registry login
-          docker-compose pull
-          docker-compose up -d
+          make pull
+          make compose-up

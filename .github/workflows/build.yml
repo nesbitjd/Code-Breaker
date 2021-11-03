@@ -1,11 +1,10 @@
-name: Go
+name: build
 
 on:
   push:
   pull_request:
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -17,4 +16,7 @@ jobs:
         go-version: 1.17
 
     - name: Build
-      run: go build -v -o codebreaker cmd/codebreaker/*
+      run: make go-build
+
+    - name: Build container image
+      run: make docker-build

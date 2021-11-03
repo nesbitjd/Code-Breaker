@@ -2,7 +2,10 @@ version: '3'
 
 services:
 
-  server:
+  server:    
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: server
     image: registry.digitalocean.com/nesbitjd/codebreaker:latest
     restart: always

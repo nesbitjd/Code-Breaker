@@ -15,20 +15,20 @@ func Update(c *gin.Context) {
 	db := database.Setup(c)
 
 	// Migrate the schema
-	db.AutoMigrate(&types.Product{})
+	db.AutoMigrate(&types.HangmanDB{})
 
-	code := c.Param("code")
-	product := &types.Product{}
-	err := c.Bind(product)
+	word := c.Param("word")
+	hangman := &types.Hangman{}
+	err := c.Bind(hangman)
 	if err != nil {
-		retErr := fmt.Errorf("Unable to parse json body: %w", err)
+		retErr := fmt.Errorf("unable to parse json body: %w", err)
 		c.Error(retErr)
 		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
 		return
 	}
 
-	fmt.Printf("update: %+v\n", db.Model(&product).Where("Code = ?", code).Updates(types.Product{Code: product.Code, Price: product.Price}))
+	fmt.Printf("update: %+v\n", db.Model(&hangman).Where("Word = ?", word).Updates(types.HangmanDB{Word: hangman.Word, Failures: hangman.Failures}))
 
-	resp := fmt.Sprintf("updated entry %+v", product.Code)
+	resp := fmt.Sprintf("updated entry %+v", hangman.Word)
 	c.JSON(http.StatusCreated, resp)
 }

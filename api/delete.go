@@ -15,12 +15,12 @@ func Delete(c *gin.Context) {
 	db := database.Setup(c)
 
 	// Migrate the schema
-	db.AutoMigrate(&types.Product{})
+	db.AutoMigrate(&types.HangmanDB{})
 
-	code := c.Param("code")
+	word := c.Param("word")
 
-	fmt.Printf("delete: %+v\n", db.Where("Code = ?", code).Delete(&types.Product{}))
+	fmt.Printf("delete: %+v\n", db.Where("Word = ?", word).Delete(&types.HangmanDB{}))
 
-	resp := fmt.Sprintf("deleted entry %+v\n", code)
+	resp := fmt.Sprintf("deleted entry %+v\n", word)
 	c.JSON(http.StatusOK, resp)
 }

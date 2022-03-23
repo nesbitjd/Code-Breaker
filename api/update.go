@@ -17,7 +17,7 @@ func Update(c *gin.Context) {
 	// Migrate the schema
 	db.AutoMigrate(&types.HangmanDB{})
 
-	word := c.Param("word")
+	id := c.Param("id")
 	hangman := &types.Hangman{}
 	err := c.Bind(hangman)
 	if err != nil {
@@ -27,7 +27,8 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("update: %+v\n", db.Model(&hangman).Where("Word = ?", word).Updates(types.HangmanDB{Word: hangman.Word, Failures: hangman.Failures}))
+	hDB := hangman.HangmanToDB()
+	db.Model(&types.HangmanDB{}).Where("id = ?", id).Updates(hDB)
 
 	resp := fmt.Sprintf("updated entry %+v", hangman.Word)
 	c.JSON(http.StatusCreated, resp)

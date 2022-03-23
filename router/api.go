@@ -12,6 +12,7 @@ func APIHandlers(base *gin.RouterGroup) {
 	{
 		apibase.POST("/hangman", api.Create)
 		apibase.DELETE("/hangman/:word", api.Delete)
-		apibase.PUT("/hangman/:word", api.Update)
+		apibase.PUT("/hangman/:id", api.Update)
+		apibase.GET("/hangman/:id", api.Read)
 	}
 }

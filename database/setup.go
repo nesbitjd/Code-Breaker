@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -19,6 +20,7 @@ const (
 // Setup sets up the database
 func Setup(c *gin.Context) *gorm.DB {
 
+	logrus.SetLevel(logrus.DebugLevel)
 	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := gorm.Open(postgres.Open(psqlconn), &gorm.Config{})

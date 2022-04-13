@@ -17,7 +17,7 @@ restart: down up
 #
 # Usage: `make up`
 .PHONY: up
-up: go-build compose-up
+up: go-build build-and-compose
 
 # The `down` target is intended to destroy
 # the local Docker compose stack.

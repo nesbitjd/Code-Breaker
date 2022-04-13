@@ -7,27 +7,38 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 // Create creates a database entry
 func Create(c *gin.Context) {
 
-	db := database.Setup(c)
-
-	// Migrate the schema
-	db.AutoMigrate(&types.Product{})
-
-	product := &types.Product{}
-	err := c.Bind(product)
+	logrus.Debug("Opening up database")
+	db, err := database.Open()
 	if err != nil {
-		retErr := fmt.Errorf("Unable to parse json body: %w", err)
+		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
 		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
 		return
 	}
 
-	fmt.Printf("create: %+v\n", db.Create(product))
+	hangman := &types.Hangman{}
+	err = c.Bind(hangman)
+	if err != nil {
+		retErr := fmt.Errorf("unable to parse json body: %w", err)
+		c.Error(retErr)
+		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
+		return
+	}
 
-	resp := fmt.Sprintf("created entry %+v", product.Code)
+	hangmanDB := hangman.HangmanToDB()
+	logrus.Debugf("Convert hangmanDB: %+v", hangmanDB)
+
+	hangmanDBres := db.Create(&hangmanDB)
+	logrus.Debug("Create hangmanDBres")
+
+	fmt.Printf("create: %+v\n", hangmanDBres)
+
+	resp := fmt.Sprintf("created entry %+v", hangman.Word)
 	c.JSON(http.StatusCreated, resp)
 }

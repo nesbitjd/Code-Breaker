@@ -10,8 +10,9 @@ import (
 func APIHandlers(base *gin.RouterGroup) {
 	apibase := base.Group("/")
 	{
-		apibase.POST("/product", api.Create)
-		apibase.DELETE("/product/:code", api.Delete)
-		apibase.PUT("/product/:code", api.Update)
+		apibase.POST("/hangman", api.Create)
+		apibase.DELETE("/hangman/:word", api.Delete)
+		apibase.PUT("/hangman/:id", api.Update)
+		apibase.GET("/hangman/:id", api.Read)
 	}
 }

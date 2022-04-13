@@ -10,8 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Delete deletes database entry
-func Delete(c *gin.Context) {
+// Read reads
+func Read(c *gin.Context) {
 
 	logrus.Debug("Opening up database")
 	db, err := database.Open()
@@ -22,10 +22,12 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	word := c.Param("word")
+	id := c.Param("id")
+	readingHangman := types.HangmanDB{}
 
-	fmt.Printf("delete: %+v\n", db.Where("Word = ?", word).Delete(&types.HangmanDB{}))
+	db.Where("id = ?", id).Find(&readingHangman).Scan(&readingHangman)
 
-	resp := fmt.Sprintf("deleted entry %+v", word)
+	resp := fmt.Sprintf("%+v for ID: %+v", readingHangman, id)
+
 	c.JSON(http.StatusOK, resp)
 }

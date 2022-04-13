@@ -1,9 +1,10 @@
 package database
 
 import (
+	"Projects/code_breaker/types"
 	"fmt"
 
-	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -17,14 +18,27 @@ const (
 )
 
 // Setup sets up the database
-func Setup(c *gin.Context) *gorm.DB {
+func Setup() error {
+
+	db, err := Open()
+	if err != nil {
+		return fmt.Errorf("unable to open database: %w", err)
+	}
+
+	logrus.Debug("Automigrating")
+	err = db.AutoMigrate(&types.HangmanDB{})
+	if err != nil {
+		return fmt.Errorf("unable to automigrate: %w", err)
+	}
+
+	return nil
+}
+
+func Open() (*gorm.DB, error) {
 
 	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := gorm.Open(postgres.Open(psqlconn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
 
-	return db
+	return db, err
 }

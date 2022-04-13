@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Projects/code_breaker/database"
 	"Projects/code_breaker/router"
 	"fmt"
 	"net/http"
@@ -11,7 +12,14 @@ import (
 
 func main() {
 
+	logrus.SetLevel(logrus.DebugLevel)
+
 	port := "8080"
+
+	err := database.Setup()
+	if err != nil {
+		panic(err)
+	}
 
 	r := gin.Default()
 
@@ -20,7 +28,7 @@ func main() {
 	srv := &http.Server{Addr: fmt.Sprintf(":%s", port), Handler: router}
 
 	logrus.Info("Starting HTTP server...")
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}

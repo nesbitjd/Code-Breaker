@@ -7,19 +7,24 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 // Update updates a database entry
 func Update(c *gin.Context) {
 
-	db := database.Setup(c)
-
-	// Migrate the schema
-	db.AutoMigrate(&types.HangmanDB{})
+	logrus.Debug("Opening up database")
+	db, err := database.Open()
+	if err != nil {
+		retErr := fmt.Errorf("unable to open database: %w", err)
+		c.Error(retErr)
+		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
+		return
+	}
 
 	id := c.Param("id")
 	hangman := &types.Hangman{}
-	err := c.Bind(hangman)
+	err = c.Bind(hangman)
 	if err != nil {
 		retErr := fmt.Errorf("unable to parse json body: %w", err)
 		c.Error(retErr)

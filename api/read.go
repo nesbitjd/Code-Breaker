@@ -13,16 +13,12 @@ import (
 // Read reads
 func Read(c *gin.Context) {
 
-	logrus.Debug("Setting up database")
-	db := database.Setup(c)
-
-	// Migrate the schema
-	logrus.Debug("Automigrating")
-	err := db.AutoMigrate(&types.HangmanDB{})
+	logrus.Debug("Opening up database")
+	db, err := database.Open()
 	if err != nil {
-		retErr := fmt.Errorf("database unable to automigrate: %w", err)
+		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
-		c.AbortWithStatusJSON(http.StatusInternalServerError, retErr.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
 		return
 	}
 

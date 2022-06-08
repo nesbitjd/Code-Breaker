@@ -1,7 +1,7 @@
 package database
 
 import (
-	"Projects/code_breaker/types"
+	"Projects/hangle_server/types"
 	"fmt"
 
 	"github.com/sirupsen/logrus"
@@ -19,13 +19,12 @@ const (
 
 // Setup sets up the database
 func Setup() error {
-
 	db, err := Open()
 	if err != nil {
 		return fmt.Errorf("unable to open database: %w", err)
 	}
 
-	logrus.Debug("Automigrating")
+	logrus.Debug("Automigrating database")
 	err = db.AutoMigrate(&types.HangmanDB{})
 	if err != nil {
 		return fmt.Errorf("unable to automigrate: %w", err)
@@ -35,7 +34,7 @@ func Setup() error {
 }
 
 func Open() (*gorm.DB, error) {
-
+	logrus.Info("Opening connection to database")
 	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := gorm.Open(postgres.Open(psqlconn), &gorm.Config{})

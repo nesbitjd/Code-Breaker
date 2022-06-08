@@ -1,8 +1,8 @@
 package api
 
 import (
-	"Projects/code_breaker/database"
-	"Projects/code_breaker/types"
+	"Projects/hangle_server/database"
+	"Projects/hangle_server/types"
 	"fmt"
 	"net/http"
 
@@ -10,10 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Delete deletes database entry
+// Delete deletes entry for the given word
 func Delete(c *gin.Context) {
-
-	logrus.Debug("Opening up database")
+	logrus.Info("Deleting entry for the given word")
 	db, err := database.Open()
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
@@ -24,7 +23,7 @@ func Delete(c *gin.Context) {
 
 	word := c.Param("word")
 
-	fmt.Printf("delete: %+v\n", db.Where("Word = ?", word).Delete(&types.HangmanDB{}))
+	logrus.Debugf("delete: %+v\n", db.Where("Word = ?", word).Delete(&types.HangmanDB{}))
 
 	resp := fmt.Sprintf("deleted entry %+v", word)
 	c.JSON(http.StatusOK, resp)

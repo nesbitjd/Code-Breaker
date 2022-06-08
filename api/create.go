@@ -1,8 +1,8 @@
 package api
 
 import (
-	"Projects/code_breaker/database"
-	"Projects/code_breaker/types"
+	"Projects/hangle_server/database"
+	"Projects/hangle_server/types"
 	"fmt"
 	"net/http"
 
@@ -10,10 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Create creates a database entry
-func Create(c *gin.Context) {
-
-	logrus.Debug("Opening up database")
+// CreateWord creates a database entry for the given word
+func CreateWord(c *gin.Context) {
+	logrus.Info("Creating entry for new word")
 	db, err := database.Open()
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
@@ -22,6 +21,7 @@ func Create(c *gin.Context) {
 		return
 	}
 
+	logrus.Debug("Binding json input to hangman struct")
 	hangman := &types.Hangman{}
 	err = c.Bind(hangman)
 	if err != nil {
@@ -31,13 +31,13 @@ func Create(c *gin.Context) {
 		return
 	}
 
+	logrus.Trace("Convert to hangmanDB")
 	hangmanDB := hangman.HangmanToDB()
-	logrus.Debugf("Convert hangmanDB: %+v", hangmanDB)
 
+	logrus.Trace("Create hangmanDBres")
 	hangmanDBres := db.Create(&hangmanDB)
-	logrus.Debug("Create hangmanDBres")
 
-	fmt.Printf("create: %+v\n", hangmanDBres)
+	logrus.Debugf("created: %+v\n", hangmanDBres)
 
 	resp := fmt.Sprintf("created entry %+v", hangman.Word)
 	c.JSON(http.StatusCreated, resp)

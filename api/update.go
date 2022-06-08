@@ -1,8 +1,8 @@
 package api
 
 import (
-	"Projects/code_breaker/database"
-	"Projects/code_breaker/types"
+	"Projects/hangle_server/database"
+	"Projects/hangle_server/types"
 	"fmt"
 	"net/http"
 
@@ -10,10 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Update updates a database entry
+// Update database entry for word
 func Update(c *gin.Context) {
-
-	logrus.Debug("Opening up database")
+	logrus.Info("Updating database entry for word")
 	db, err := database.Open()
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
@@ -24,6 +23,8 @@ func Update(c *gin.Context) {
 
 	id := c.Param("id")
 	hangman := &types.Hangman{}
+
+	logrus.Trace("Binding requested id to hangman type")
 	err = c.Bind(hangman)
 	if err != nil {
 		retErr := fmt.Errorf("unable to parse json body: %w", err)
@@ -32,6 +33,7 @@ func Update(c *gin.Context) {
 		return
 	}
 
+	logrus.Debug("Scan table for database entry and update word struct")
 	hDB := hangman.HangmanToDB()
 	db.Model(&types.HangmanDB{}).Where("id = ?", id).Updates(hDB)
 

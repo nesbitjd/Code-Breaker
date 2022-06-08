@@ -1,8 +1,8 @@
 package api
 
 import (
-	"Projects/code_breaker/database"
-	"Projects/code_breaker/types"
+	"Projects/hangle_server/database"
+	"Projects/hangle_server/types"
 	"fmt"
 	"net/http"
 
@@ -10,9 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Read reads
+// Read returns word struct from database
 func Read(c *gin.Context) {
-
+	logrus.Info("Reading word struct from database")
 	logrus.Debug("Opening up database")
 	db, err := database.Open()
 	if err != nil {
@@ -25,9 +25,10 @@ func Read(c *gin.Context) {
 	id := c.Param("id")
 	readingHangman := types.HangmanDB{}
 
+	logrus.Debug("Scan table for word struct")
 	db.Where("id = ?", id).Find(&readingHangman).Scan(&readingHangman)
 
-	resp := fmt.Sprintf("%+v for ID: %+v", readingHangman, id)
+	returnHangman := readingHangman.DBtoHangman()
 
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusOK, returnHangman)
 }

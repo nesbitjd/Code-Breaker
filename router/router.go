@@ -1,7 +1,7 @@
 package router
 
 import (
-	"Projects/code_breaker/api"
+	"Projects/hangle_server/api"
 
 	"github.com/gin-gonic/gin"
 )

@@ -31,7 +31,7 @@ jobs:
       run: doctl registry login --expiry-seconds 600    
       
     - name: Push image to DigitalOcean Container Registry
-      run: docker push registry.digitalocean.com/nesbitjd/codebreaker:latest
+      run: docker push registry.digitalocean.com/nesbitjd/hangle_server:latest
       
     - name: copy file via ssh key
       uses: appleboy/scp-action@master

@@ -1,7 +1,9 @@
 package router
 
 import (
-	"Projects/hangle_server/api"
+	"Projects/hangle_server/api/record"
+	"Projects/hangle_server/api/user"
+	"Projects/hangle_server/api/word"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,9 +12,22 @@ import (
 func APIHandlers(base *gin.RouterGroup) {
 	apibase := base.Group("/")
 	{
-		apibase.POST("/hangman", api.CreateWord)
-		apibase.DELETE("/hangman/:word", api.Delete)
-		apibase.PUT("/hangman/:id", api.Update)
-		apibase.GET("/hangman/:id", api.Read)
+		// API endpoints for record table
+		apibase.POST("/record", record.Create)
+		apibase.DELETE("/record/:id", record.Delete)
+		apibase.PUT("/record/:id", record.Update)
+		apibase.GET("/record/:id", record.Read)
+
+		// API endpoints for user table
+		apibase.POST("/user", user.Create)
+		apibase.DELETE("/user/:id", user.Delete)
+		apibase.PUT("/user/:id", user.Update)
+		apibase.GET("/user/:id", user.Read)
+
+		// API endpoints for word table
+		apibase.POST("/word", word.Create)
+		apibase.DELETE("/word/:id", word.Delete)
+		apibase.PUT("/word/:id", word.Update)
+		apibase.GET("/word/:id", word.Read)
 	}
 }

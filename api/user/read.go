@@ -1,4 +1,4 @@
-package api
+package user
 
 import (
 	"Projects/hangle_server/database"
@@ -10,10 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Read returns word struct from database
+// Read returns user struct from database
 func Read(c *gin.Context) {
-	logrus.Info("Reading word struct from database")
-	logrus.Debug("Opening up database")
+	logrus.Info("Reading user struct from database")
 	db, err := database.Open()
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
@@ -23,12 +22,10 @@ func Read(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	readingHangman := types.HangmanDB{}
+	readingUser := types.User{}
 
-	logrus.Debug("Scan table for word struct")
-	db.Where("id = ?", id).Find(&readingHangman).Scan(&readingHangman)
+	logrus.Debug("Scan table for user struct")
+	db.Where("id = ?", id).Find(&readingUser).Scan(&readingUser)
 
-	returnHangman := readingHangman.DBtoHangman()
-
-	c.JSON(http.StatusOK, returnHangman)
+	c.JSON(http.StatusOK, readingUser)
 }

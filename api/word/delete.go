@@ -1,4 +1,4 @@
-package api
+package word
 
 import (
 	"Projects/hangle_server/database"
@@ -21,10 +21,10 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	word := c.Param("word")
+	id := c.Param("id")
 
-	logrus.Debugf("delete: %+v\n", db.Where("Word = ?", word).Delete(&types.HangmanDB{}))
+	logrus.Debugf("delete: %+v\n", db.Where("id = ?", id).Delete(&types.Word{}))
 
-	resp := fmt.Sprintf("deleted entry %+v", word)
+	resp := fmt.Sprintf("deleted entry %+v", id)
 	c.JSON(http.StatusOK, resp)
 }

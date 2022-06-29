@@ -1,4 +1,4 @@
-package api
+package word
 
 import (
 	"Projects/hangle_server/database"
@@ -10,9 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// CreateWord creates a database entry for the given word
-func CreateWord(c *gin.Context) {
-	logrus.Info("Creating entry for new word")
+// Update database entry for word
+func Update(c *gin.Context) {
+	logrus.Info("Updating database entry for word")
 	db, err := database.Open()
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
@@ -21,9 +21,11 @@ func CreateWord(c *gin.Context) {
 		return
 	}
 
-	logrus.Debug("Binding json input to hangman struct")
-	hangman := &types.Hangman{}
-	err = c.Bind(hangman)
+	id := c.Param("id")
+	word := &types.Word{}
+
+	logrus.Trace("Binding requested id to word struct")
+	err = c.Bind(word)
 	if err != nil {
 		retErr := fmt.Errorf("unable to parse json body: %w", err)
 		c.Error(retErr)
@@ -31,14 +33,9 @@ func CreateWord(c *gin.Context) {
 		return
 	}
 
-	logrus.Trace("Convert to hangmanDB")
-	hangmanDB := hangman.HangmanToDB()
+	logrus.Debug("Scan table for database entry and update word struct")
+	db.Model(&types.Word{}).Where("id = ?", id).Updates(word)
 
-	logrus.Trace("Create hangmanDBres")
-	hangmanDBres := db.Create(&hangmanDB)
-
-	logrus.Debugf("created: %+v\n", hangmanDBres)
-
-	resp := fmt.Sprintf("created entry %+v", hangman.Word)
+	resp := fmt.Sprintf("updated entry %+v", word.Word)
 	c.JSON(http.StatusCreated, resp)
 }

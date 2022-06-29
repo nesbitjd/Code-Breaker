@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 const (
@@ -20,12 +21,13 @@ const (
 // Setup sets up the database
 func Setup() error {
 	db, err := Open()
+	db.Logger.LogMode(logger.Info)
 	if err != nil {
 		return fmt.Errorf("unable to open database: %w", err)
 	}
 
 	logrus.Debug("Automigrating database")
-	err = db.AutoMigrate(&types.HangmanDB{})
+	err = db.AutoMigrate(&types.User{}, &types.Word{}, &types.Record{})
 	if err != nil {
 		return fmt.Errorf("unable to automigrate: %w", err)
 	}

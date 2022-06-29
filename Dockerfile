@@ -1,5 +1,5 @@
 FROM alpine
 
-COPY ./codebreaker /bin/
+COPY ./hangle_server /bin/
 
-ENTRYPOINT [ "/bin/codebreaker" ]
+ENTRYPOINT [ "/bin/hangle_server" ]

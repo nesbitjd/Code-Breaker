@@ -1,8 +1,8 @@
-package api
+package user
 
 import (
-	"Projects/code_breaker/database"
-	"Projects/code_breaker/types"
+	"Projects/hangle_server/database"
+	"Projects/hangle_server/types"
 	"fmt"
 	"net/http"
 
@@ -10,10 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Read reads
-func Read(c *gin.Context) {
-
-	logrus.Debug("Opening up database")
+// Delete deletes entry for the given user
+func Delete(c *gin.Context) {
+	logrus.Info("Deleting entry for the given user")
 	db, err := database.Open()
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
@@ -23,11 +22,9 @@ func Read(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	readingHangman := types.HangmanDB{}
 
-	db.Where("id = ?", id).Find(&readingHangman).Scan(&readingHangman)
+	logrus.Debugf("delete: %+v\n", db.Where("id = ?", id).Delete(&types.User{}))
 
-	resp := fmt.Sprintf("%+v for ID: %+v", readingHangman, id)
-
+	resp := fmt.Sprintf("deleted entry %+v", id)
 	c.JSON(http.StatusOK, resp)
 }

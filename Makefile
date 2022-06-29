@@ -59,12 +59,12 @@ fmt:
 .PHONY: go-build
 go-build:
 	@echo
-	GOOS=linux CGO_ENABLED=0 go build -o ./codebreaker cmd/codebreaker/*
+	GOOS=linux CGO_ENABLED=0 go build -o ./hangle_server cmd/hangle_server/*
 
 .PHONY: docker-build
 docker-build:
 	@echo
-	docker build -t registry.digitalocean.com/nesbitjd/codebreaker:latest .
+	docker build -t registry.digitalocean.com/nesbitjd/hangle_server:latest .
 
 # The `fix` target is intended to rewrite the
 # Go source code using old APIs.

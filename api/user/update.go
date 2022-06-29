@@ -1,8 +1,8 @@
-package api
+package user
 
 import (
-	"Projects/code_breaker/database"
-	"Projects/code_breaker/types"
+	"Projects/hangle_server/database"
+	"Projects/hangle_server/types"
 	"fmt"
 	"net/http"
 
@@ -10,10 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Create creates a database entry
-func Create(c *gin.Context) {
-
-	logrus.Debug("Opening up database")
+// Update database entry for user
+func Update(c *gin.Context) {
+	logrus.Info("Updating database entry for user")
 	db, err := database.Open()
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
@@ -22,8 +21,11 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	hangman := &types.Hangman{}
-	err = c.Bind(hangman)
+	id := c.Param("id")
+	user := &types.User{}
+
+	logrus.Trace("Binding requested id to hangman type")
+	err = c.Bind(user)
 	if err != nil {
 		retErr := fmt.Errorf("unable to parse json body: %w", err)
 		c.Error(retErr)
@@ -31,14 +33,9 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	hangmanDB := hangman.HangmanToDB()
-	logrus.Debugf("Convert hangmanDB: %+v", hangmanDB)
+	logrus.Debug("Scan table for database entry and update user struct")
+	db.Model(&types.User{}).Where("id = ?", id).Updates(user)
 
-	hangmanDBres := db.Create(&hangmanDB)
-	logrus.Debug("Create hangmanDBres")
-
-	fmt.Printf("create: %+v\n", hangmanDBres)
-
-	resp := fmt.Sprintf("created entry %+v", hangman.Word)
+	resp := fmt.Sprintf("updated entry %+v", user.Username)
 	c.JSON(http.StatusCreated, resp)
 }

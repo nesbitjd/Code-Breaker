@@ -7,14 +7,14 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: server
-    image: registry.digitalocean.com/nesbitjd/codebreaker:latest
+    image: registry.digitalocean.com/nesbitjd/hangle_server:latest
     restart: always
     ports:
       - '8080:8080'
     depends_on:
       - postgres
     networks:
-      - codebreaker
+      - hangle_server
 
   # The `postgres` compose service hosts the Postgresql database.
   #
@@ -31,7 +31,7 @@ services:
     ports:
       - '5432:5432'
     networks:
-      - codebreaker
+      - hangle_server
     
 networks:
-  codebreaker:
+  hangle_server:

@@ -1,30 +1,43 @@
 package main
 
 import (
-	"Projects/code_breaker/database"
-	"Projects/code_breaker/router"
+	"Projects/hangle_server/database"
+	"Projects/hangle_server/router"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
+	level, ok := os.LookupEnv("LOG_LEVEL")
+	if !ok {
+		level = "info"
+	}
 
-	logrus.SetLevel(logrus.DebugLevel)
+	lvl, err := logrus.ParseLevel(level)
+	if err != nil {
+		lvl = logrus.DebugLevel
+	}
+	logrus.SetLevel(lvl)
 
 	port := "8080"
 
-	err := database.Setup()
+	logrus.Info("Setting up database")
+	err = database.Setup()
 	if err != nil {
 		panic(err)
 	}
 
+	logrus.Debug("Intializing gin engine")
 	r := gin.Default()
 
+	logrus.Trace("Loading router")
 	router := router.Load()
 
+	logrus.Trace("Initializing http server")
 	srv := &http.Server{Addr: fmt.Sprintf(":%s", port), Handler: router}
 
 	logrus.Info("Starting HTTP server...")

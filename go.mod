@@ -1,4 +1,4 @@
-module Projects/hangle_server
+module github.com/nesbitjd/hangle_server
 
 go 1.16
 

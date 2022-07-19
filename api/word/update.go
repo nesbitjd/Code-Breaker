@@ -1,10 +1,11 @@
 package word
 
 import (
-	"Projects/hangle_server/database"
-	"Projects/hangle_server/types"
 	"fmt"
 	"net/http"
+
+	"github.com/nesbitjd/hangle_server/database"
+	"github.com/nesbitjd/hangle_server/types"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"

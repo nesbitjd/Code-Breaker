@@ -1,11 +1,12 @@
 package main
 
 import (
-	"Projects/hangle_server/database"
-	"Projects/hangle_server/router"
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/nesbitjd/hangle_server/database"
+	"github.com/nesbitjd/hangle_server/router"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"

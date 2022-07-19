@@ -1,9 +1,9 @@
 package router
 
 import (
-	"Projects/hangle_server/api/record"
-	"Projects/hangle_server/api/user"
-	"Projects/hangle_server/api/word"
+	"github.com/nesbitjd/hangle_server/api/record"
+	"github.com/nesbitjd/hangle_server/api/user"
+	"github.com/nesbitjd/hangle_server/api/word"
 
 	"github.com/gin-gonic/gin"
 )

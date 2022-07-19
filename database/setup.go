@@ -1,8 +1,9 @@
 package database
 
 import (
-	"Projects/hangle_server/types"
 	"fmt"
+
+	"github.com/nesbitjd/hangle_server/types"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"

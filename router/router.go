@@ -1,7 +1,7 @@
 package router
 
 import (
-	"Projects/hangle_server/api"
+	"github.com/nesbitjd/hangle_server/api"
 
 	"github.com/gin-gonic/gin"
 )

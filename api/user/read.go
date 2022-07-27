@@ -30,3 +30,22 @@ func Read(c *gin.Context) {
 
 	c.JSON(http.StatusOK, readingUser)
 }
+
+// ReadAll returns all user structs from database
+func ReadAll(c *gin.Context) {
+	logrus.Info("Reading user struct from database")
+	db, err := database.Open()
+	if err != nil {
+		retErr := fmt.Errorf("unable to open database: %w", err)
+		c.Error(retErr)
+		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
+		return
+	}
+
+	readingUser := []types.User{}
+
+	logrus.Debug("Scan table for user struct")
+	db.Find(&readingUser).Scan(&readingUser)
+
+	c.JSON(http.StatusOK, readingUser)
+}

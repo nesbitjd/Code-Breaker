@@ -3,11 +3,16 @@ package types
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"io/ioutil"
 	"net/http"
+	"path"
 	"strings"
 
 	"gorm.io/gorm"
+)
+
+var (
+	apiBase = "api/v1"
 )
 
 // Record is the representation of a finished game state
@@ -45,26 +50,19 @@ type Guesses []string
 
 // ToString converts Guesses into a string
 func (g *Guesses) ToString() string {
-
 	return strings.Join(*g, ", ")
 }
 
 // GuessesFromString converts a string into Guesses
 func GuessesFromString(g string) Guesses {
-
 	return strings.Split(g, ", ")
 }
 
-// UploadResults uploads the results of a finshed game to the database
-func (game *Record) UploadResults(base_url string, failures int, guesses []string) error {
+// PostResults posts the results of a finshed game to the database
+func (r *Record) PostResults(base_url string) error {
+	record_url := path.Join(base_url, apiBase, "record")
 
-	game.Failures = failures
-	game.Guesses = strings.Join(guesses, ",")
-	game.UserID = 1
-
-	record_url := fmt.Sprintf("%s/record", base_url)
-
-	postBody, err := json.Marshal(game)
+	postBody, err := json.Marshal(r)
 	if err != nil {
 		return err
 	}
@@ -78,6 +76,40 @@ func (game *Record) UploadResults(base_url string, failures int, guesses []strin
 
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	_, err = client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// PostUser posts a new user to the database
+func (u *User) PostUser(base_url string) error {
+	user_url := path.Join(base_url, apiBase, "user")
+	postBody, err := json.Marshal(u)
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+
+	req, err := http.NewRequest(http.MethodPost, user_url, bytes.NewBuffer(postBody))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(body, &u)
 	if err != nil {
 		return err
 	}

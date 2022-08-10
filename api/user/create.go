@@ -37,6 +37,9 @@ func Create(c *gin.Context) {
 
 	logrus.Debugf("created: %+v\n", userDB)
 
-	resp := fmt.Sprintf("created entry %+v", user.Username)
-	c.JSON(http.StatusCreated, resp)
+	userReturn := types.User{}
+	logrus.Debug("Scan table for user struct")
+	db.Where("username = ?", user.Username).Find(&userReturn).Scan(&userReturn)
+
+	c.JSON(http.StatusCreated, userReturn)
 }

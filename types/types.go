@@ -125,6 +125,7 @@ func (u *User) PostUser(base_url string) error {
 	return nil
 }
 
+// GetLastWord gets the most recently added word
 func GetLastWord(base_url string) (Word, error) {
 	word_url, err := url.JoinPath(base_url, apiBase, "word/last")
 	if err != nil {
@@ -141,7 +142,6 @@ func GetLastWord(base_url string) (Word, error) {
 	}
 
 	word := Word{}
-
 	err = json.Unmarshal(body, &word)
 	if err != nil {
 		return Word{}, fmt.Errorf("unable to unmarshal json: %w", err)
@@ -150,6 +150,7 @@ func GetLastWord(base_url string) (Word, error) {
 	return word, nil
 }
 
+// GetAllUsers returns a slice of all users
 func GetAllUsers(base_url string) ([]User, error) {
 	user_url, err := url.JoinPath(base_url, apiBase, "user")
 	if err != nil {
@@ -167,7 +168,6 @@ func GetAllUsers(base_url string) ([]User, error) {
 	}
 
 	users := []User{}
-
 	err = json.Unmarshal(body, &users)
 	if err != nil {
 		return []User{}, fmt.Errorf("unable to unmarshal user body: %w", err)

@@ -29,7 +29,7 @@ func main() {
 	logrus.Info("Setting up database")
 	err = database.Setup()
 	if err != nil {
-		panic(err)
+		logrus.Fatal(fmt.Errorf("unable to setup database: %w", err))
 	}
 
 	logrus.Debug("Intializing gin engine")
@@ -44,7 +44,7 @@ func main() {
 	logrus.Info("Starting HTTP server...")
 	err = srv.ListenAndServe()
 	if err != nil {
-		panic(err)
+		logrus.Fatal(fmt.Errorf("unable to listen and serve: %w", err))
 	}
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

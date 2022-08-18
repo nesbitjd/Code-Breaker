@@ -3,9 +3,10 @@ package types
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
+	"io"
 	"net/http"
-	"path"
+	"net/url"
 	"strings"
 
 	"gorm.io/gorm"
@@ -60,24 +61,27 @@ func GuessesFromString(g string) Guesses {
 
 // PostResults posts the results of a finshed game to the database
 func (r *Record) PostResults(base_url string) error {
-	record_url := path.Join(base_url, apiBase, "record")
+	record_url, err := url.JoinPath(base_url, apiBase, "record")
+	if err != nil {
+		return fmt.Errorf("unable to parse url: %w", err)
+	}
 
 	postBody, err := json.Marshal(r)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to marshal json: %w", err)
 	}
 
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodPost, record_url, bytes.NewBuffer(postBody))
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to wrap NewRequest: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	_, err = client.Do(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("error from sending request: %w", err)
 	}
 
 	return nil
@@ -85,34 +89,89 @@ func (r *Record) PostResults(base_url string) error {
 
 // PostUser posts a new user to the database
 func (u *User) PostUser(base_url string) error {
-	user_url := path.Join(base_url, apiBase, "user")
+	user_url, err := url.JoinPath(base_url, apiBase, "user")
+	if err != nil {
+		return fmt.Errorf("unable to parse url: %w", err)
+	}
+
 	postBody, err := json.Marshal(u)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to marshal json: %w", err)
 	}
 
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodPost, user_url, bytes.NewBuffer(postBody))
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to wrap NewRequest: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("error from sending request: %w", err)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to read body: %w", err)
 	}
 
 	err = json.Unmarshal(body, &u)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to unmarshal json: %w", err)
 	}
 
 	return nil
+}
+
+// GetLastWord gets the most recently added word
+func GetLastWord(base_url string) (Word, error) {
+	word_url, err := url.JoinPath(base_url, apiBase, "word/last")
+	if err != nil {
+		return Word{}, fmt.Errorf("unable to parse url: %w", err)
+	}
+	resp, err := http.Get(word_url)
+	if err != nil {
+		return Word{}, fmt.Errorf("unable to get last word: %w", err)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return Word{}, fmt.Errorf("unable to read body: %w", err)
+	}
+
+	word := Word{}
+	err = json.Unmarshal(body, &word)
+	if err != nil {
+		return Word{}, fmt.Errorf("unable to unmarshal json: %w", err)
+	}
+
+	return word, nil
+}
+
+// GetAllUsers returns a slice of all users
+func GetAllUsers(base_url string) ([]User, error) {
+	user_url, err := url.JoinPath(base_url, apiBase, "user")
+	if err != nil {
+		return []User{}, fmt.Errorf("unable to parse url: %w", err)
+	}
+
+	resp, err := http.Get(user_url)
+	if err != nil {
+		return []User{}, fmt.Errorf("unable to lookup user: %w", err)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []User{}, fmt.Errorf("unable to read user body: %w", err)
+	}
+
+	users := []User{}
+	err = json.Unmarshal(body, &users)
+	if err != nil {
+		return []User{}, fmt.Errorf("unable to unmarshal user body: %w", err)
+	}
+
+	return users, nil
 }

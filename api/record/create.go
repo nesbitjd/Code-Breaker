@@ -14,7 +14,7 @@ import (
 // Create creates a database entry for the given record
 func Create(c *gin.Context) {
 	logrus.Info("Creating entry for new record")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -37,6 +37,9 @@ func Create(c *gin.Context) {
 
 	logrus.Debugf("created: %+v\n", recordDB)
 
-	resp := fmt.Sprintf("created entry %+v", record.Word)
-	c.JSON(http.StatusCreated, resp)
+	recordReturn := types.Record{}
+	logrus.Debug("Scan table for record struct")
+	db.Where("username = ?", record.User.Username).Where("word = ?", record.Word.Word).Find(&recordReturn).Scan(&recordReturn)
+
+	c.JSON(http.StatusCreated, recordReturn)
 }

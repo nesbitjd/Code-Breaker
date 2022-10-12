@@ -14,7 +14,7 @@ import (
 // Create creates a database entry for the given user
 func Create(c *gin.Context) {
 	logrus.Info("Creating entry for new user")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -34,6 +34,12 @@ func Create(c *gin.Context) {
 
 	logrus.Trace("Create UserDB")
 	userDB := db.Create(&user)
+	if userDB.Error != nil {
+		retErr := fmt.Errorf("unable to create user: %w", userDB.Error)
+		c.Error(retErr)
+		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
+		return
+	}
 
 	logrus.Debugf("created: %+v\n", userDB)
 

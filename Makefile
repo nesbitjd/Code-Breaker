@@ -17,7 +17,7 @@ restart: down up
 #
 # Usage: `make up`
 .PHONY: up
-up: go-build build-and-compose seed-db
+up: go-build build-and-compose
 
 # The `down` target is intended to destroy
 # the local Docker compose stack.
@@ -119,3 +119,13 @@ seed-db:
 	@echo
 	@echo "### Seeding database with sample word"
 	@sh testdata/seed-db.sh
+
+.PHONY: functional
+functional: restart functional-test
+
+.PHONY: functional-test
+functional-test:
+	@echo
+	@echo "### Starting functional tests"
+	@sleep 5
+	@go test ./functional/...

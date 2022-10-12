@@ -14,7 +14,7 @@ import (
 // Delete deletes entry for the given record
 func Delete(c *gin.Context) {
 	logrus.Info("Deleting entry for the given record")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)

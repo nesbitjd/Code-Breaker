@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	host     = "postgres"
 	port     = 5432
 	user     = "postgres"
 	password = "foobar"
@@ -21,7 +20,7 @@ const (
 
 // Setup sets up the database
 func Setup() error {
-	db, err := Open()
+	db, err := Open("postgres")
 	db.Logger.LogMode(logger.Info)
 	if err != nil {
 		return fmt.Errorf("unable to open database: %w", err)
@@ -36,7 +35,7 @@ func Setup() error {
 	return nil
 }
 
-func Open() (*gorm.DB, error) {
+func Open(host string) (*gorm.DB, error) {
 	logrus.Info("Opening connection to database")
 	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 

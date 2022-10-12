@@ -14,7 +14,7 @@ import (
 // Create creates a database entry for the given word
 func Create(c *gin.Context) {
 	logrus.Info("Creating entry for new word")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -37,6 +37,9 @@ func Create(c *gin.Context) {
 
 	logrus.Debugf("created: %+v\n", wordDB)
 
-	resp := fmt.Sprintf("created entry %+v", word.Word)
-	c.JSON(http.StatusCreated, resp)
+	wordReturn := types.Word{}
+	logrus.Debug("Scan table for word struct")
+	db.Where("word = ?", word.Word).Find(&wordReturn).Scan(&wordReturn)
+
+	c.JSON(http.StatusCreated, wordReturn)
 }

@@ -15,7 +15,7 @@ import (
 // Read returns record struct from database
 func Read(c *gin.Context) {
 	logrus.Info("Reading record struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -43,7 +43,7 @@ func Read(c *gin.Context) {
 // ReadAll returns all record struct
 func ReadAll(c *gin.Context) {
 	logrus.Info("Reading record struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)

@@ -14,7 +14,7 @@ import (
 // Update database entry for user
 func Update(c *gin.Context) {
 	logrus.Info("Updating database entry for user")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)

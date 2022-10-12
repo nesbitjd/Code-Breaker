@@ -14,7 +14,7 @@ import (
 // Read returns word struct from database
 func Read(c *gin.Context) {
 	logrus.Info("Reading word struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -34,7 +34,7 @@ func Read(c *gin.Context) {
 // ReadAll returns all word struct from database
 func ReadAll(c *gin.Context) {
 	logrus.Info("Reading word struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -53,7 +53,7 @@ func ReadAll(c *gin.Context) {
 // ReadLast returns the most recent word struct from database
 func ReadLast(c *gin.Context) {
 	logrus.Info("Reading word struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)

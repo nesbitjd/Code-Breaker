@@ -1,4 +1,4 @@
-package types
+package hangle
 
 import (
 	"fmt"
@@ -20,14 +20,14 @@ func TestPostResults(t *testing.T) {
 	{
 		httpClient := recordClient{Error: nil}
 		c := NewClient(NewConfig("localhost:8878"), &httpClient)
-		testRecord := NewRecord(*NewWord("testWord"), *NewUser("testUser"), 0, "t,e,w")
+		testRecord := NewRecord(NewWord("testWord"), NewUser("testUser"), 0, "t,e,w")
 		_, err := c.PostRecord(testRecord)
 		require.NoError(t, err)
 	}
 	{
 		httpClient := recordClient{Error: fmt.Errorf("test error")}
 		c := NewClient(NewConfig("localhost:8878"), &httpClient)
-		testRecord := NewRecord(*NewWord("testWord"), *NewUser("testUser"), 0, "t,e,w")
+		testRecord := NewRecord(NewWord("testWord"), NewUser("testUser"), 0, "t,e,w")
 		_, err := c.PostRecord(testRecord)
 		require.ErrorContains(t, err, "unable to do http request")
 

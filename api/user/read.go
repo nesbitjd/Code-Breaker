@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -23,7 +23,7 @@ func Read(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	readingUser := types.User{}
+	readingUser := hangle.User{}
 
 	logrus.Debug("Scan table for user struct")
 	db.Where("id = ?", id).Find(&readingUser).Scan(&readingUser)
@@ -42,7 +42,7 @@ func ReadAll(c *gin.Context) {
 		return
 	}
 
-	readingUser := []types.User{}
+	readingUser := []hangle.User{}
 
 	logrus.Debug("Scan table for user struct")
 	db.Find(&readingUser).Scan(&readingUser)

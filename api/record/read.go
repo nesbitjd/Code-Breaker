@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -30,7 +30,7 @@ func Read(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
 		return
 	}
-	readingRecord := types.Record{}
+	readingRecord := hangle.Record{}
 
 	logrus.Debug("Scan table for record struct")
 	// db.Where("id = ?", id).Find(&readingRecord).Scan(&readingRecord).Preload("Word").Preload("User")
@@ -51,7 +51,7 @@ func ReadAll(c *gin.Context) {
 		return
 	}
 
-	readingRecords := []types.Record{}
+	readingRecords := []hangle.Record{}
 
 	logrus.Debug("Scan table for record struct")
 	db.Preload("Word").Preload("User").Find(&readingRecords)

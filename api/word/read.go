@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -23,7 +23,7 @@ func Read(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	readingWord := types.Word{}
+	readingWord := hangle.Word{}
 
 	logrus.Debug("Scan table for word struct")
 	db.Where("id = ?", id).Find(&readingWord).Scan(&readingWord)
@@ -42,7 +42,7 @@ func ReadAll(c *gin.Context) {
 		return
 	}
 
-	readingWord := []types.Word{}
+	readingWord := []hangle.Word{}
 
 	logrus.Debug("Scan table for word struct")
 	db.Find(&readingWord).Scan(&readingWord)
@@ -61,7 +61,7 @@ func ReadLast(c *gin.Context) {
 		return
 	}
 
-	readingWord := types.Word{}
+	readingWord := hangle.Word{}
 
 	logrus.Debug("Scan table for word struct")
 	db.Last(&readingWord).Scan(&readingWord)

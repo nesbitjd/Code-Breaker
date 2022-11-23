@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -23,7 +23,7 @@ func Create(c *gin.Context) {
 	}
 
 	logrus.Debug("Binding json input to word struct")
-	word := &types.Word{}
+	word := &hangle.Word{}
 	err = c.Bind(word)
 	if err != nil {
 		retErr := fmt.Errorf("unable to parse json body: %w", err)
@@ -37,7 +37,7 @@ func Create(c *gin.Context) {
 
 	logrus.Debugf("created: %+v\n", wordDB)
 
-	wordReturn := types.Word{}
+	wordReturn := hangle.Word{}
 	logrus.Debug("Scan table for word struct")
 	db.Where("word = ?", word.Word).Find(&wordReturn).Scan(&wordReturn)
 

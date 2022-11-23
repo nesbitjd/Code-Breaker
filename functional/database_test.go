@@ -2,10 +2,11 @@ package functional
 
 import (
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 )
@@ -21,12 +22,12 @@ func reset() error {
 		return retErr
 	}
 
-	db.Migrator().DropTable(&types.Record{})
-	db.Migrator().DropTable(&types.User{})
-	db.Migrator().DropTable(&types.Word{})
+	db.Migrator().DropTable(&hangle.Record{})
+	db.Migrator().DropTable(&hangle.User{})
+	db.Migrator().DropTable(&hangle.Word{})
 
 	logrus.Debug("Automigrating database")
-	err = db.AutoMigrate(&types.User{}, &types.Word{}, &types.Record{})
+	err = db.AutoMigrate(&hangle.User{}, &hangle.Word{}, &hangle.Record{})
 	if err != nil {
 		return fmt.Errorf("unable to automigrate: %w", err)
 	}
@@ -36,28 +37,39 @@ func reset() error {
 
 // TestCreateWord seeds a word and checks if it was created
 func TestCreateUser(t *testing.T) {
+	client := hangle.NewClient(hangle.NewConfig(base_url), http.DefaultClient)
 	{
 		require.NoError(t, reset())
-		require.NoError(t, types.NewUser("foo").PostUser(base_url))
-		require.NoError(t, types.NewUser("bar").PostUser(base_url))
+		u := hangle.NewUser("foo")
+		_, err := client.PostUser(u)
+		require.NoError(t, err)
+		u = hangle.NewUser("bar")
+		_, err = client.PostUser(u)
+		require.NoError(t, err)
 	}
 	{
 		require.NoError(t, reset())
-		require.NoError(t, types.NewUser("foo").PostUser(base_url))
-		expectedErr := "ERROR: duplicate key value violates unique constraint \"users_username_key\""
-		require.ErrorContains(t, types.NewUser("foo").PostUser(base_url), expectedErr)
+		u := hangle.NewUser("foo")
+		_, err := client.PostUser(u)
+		require.NoError(t, err)
+		expectedErr := "ERROR: duplicate key value violates unique constraint \\\"users_username_key\\\""
+		_, err = client.PostUser(u)
+		require.ErrorContains(t, err, expectedErr)
 	}
 }
 
 func TestGetAllUsers(t *testing.T) {
+	client := hangle.NewClient(hangle.NewConfig(base_url), http.DefaultClient)
 	{
 		users := []string{"user1", "user2", "user3"}
 		err := reset()
 		require.NoError(t, err)
-		for _, u := range users {
-			require.NoError(t, types.NewUser(u).PostUser(base_url))
+		for _, user := range users {
+			u := hangle.NewUser(user)
+			client.PostUser(u)
+			require.NoError(t, err)
 		}
-		userGet, err := types.GetAllUsers(base_url)
+		userGet, err := client.GetAllUsers()
 		require.NoError(t, err)
 		require.Equal(t, len(users), len(userGet))
 	}

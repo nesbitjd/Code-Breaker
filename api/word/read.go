@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -14,7 +14,7 @@ import (
 // Read returns word struct from database
 func Read(c *gin.Context) {
 	logrus.Info("Reading word struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -23,7 +23,7 @@ func Read(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	readingWord := types.Word{}
+	readingWord := hangle.Word{}
 
 	logrus.Debug("Scan table for word struct")
 	db.Where("id = ?", id).Find(&readingWord).Scan(&readingWord)
@@ -34,7 +34,7 @@ func Read(c *gin.Context) {
 // ReadAll returns all word struct from database
 func ReadAll(c *gin.Context) {
 	logrus.Info("Reading word struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -42,7 +42,7 @@ func ReadAll(c *gin.Context) {
 		return
 	}
 
-	readingWord := []types.Word{}
+	readingWord := []hangle.Word{}
 
 	logrus.Debug("Scan table for word struct")
 	db.Find(&readingWord).Scan(&readingWord)
@@ -53,7 +53,7 @@ func ReadAll(c *gin.Context) {
 // ReadLast returns the most recent word struct from database
 func ReadLast(c *gin.Context) {
 	logrus.Info("Reading word struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -61,7 +61,7 @@ func ReadLast(c *gin.Context) {
 		return
 	}
 
-	readingWord := types.Word{}
+	readingWord := hangle.Word{}
 
 	logrus.Debug("Scan table for word struct")
 	db.Last(&readingWord).Scan(&readingWord)

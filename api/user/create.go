@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -14,7 +14,7 @@ import (
 // Create creates a database entry for the given user
 func Create(c *gin.Context) {
 	logrus.Info("Creating entry for new user")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -23,7 +23,7 @@ func Create(c *gin.Context) {
 	}
 
 	logrus.Debug("Binding json input to hangman struct")
-	user := &types.User{}
+	user := &hangle.User{}
 	err = c.Bind(user)
 	if err != nil {
 		retErr := fmt.Errorf("unable to parse json body: %w", err)
@@ -34,10 +34,16 @@ func Create(c *gin.Context) {
 
 	logrus.Trace("Create UserDB")
 	userDB := db.Create(&user)
+	if userDB.Error != nil {
+		retErr := fmt.Errorf("unable to create user: %w", userDB.Error)
+		c.Error(retErr)
+		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
+		return
+	}
 
 	logrus.Debugf("created: %+v\n", userDB)
 
-	userReturn := types.User{}
+	userReturn := hangle.User{}
 	logrus.Debug("Scan table for user struct")
 	db.Where("username = ?", user.Username).Find(&userReturn).Scan(&userReturn)
 

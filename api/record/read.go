@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -15,7 +15,7 @@ import (
 // Read returns record struct from database
 func Read(c *gin.Context) {
 	logrus.Info("Reading record struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -30,7 +30,7 @@ func Read(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, retErr.Error())
 		return
 	}
-	readingRecord := types.Record{}
+	readingRecord := hangle.Record{}
 
 	logrus.Debug("Scan table for record struct")
 	// db.Where("id = ?", id).Find(&readingRecord).Scan(&readingRecord).Preload("Word").Preload("User")
@@ -43,7 +43,7 @@ func Read(c *gin.Context) {
 // ReadAll returns all record struct
 func ReadAll(c *gin.Context) {
 	logrus.Info("Reading record struct from database")
-	db, err := database.Open()
+	db, err := database.Open("postgres")
 	if err != nil {
 		retErr := fmt.Errorf("unable to open database: %w", err)
 		c.Error(retErr)
@@ -51,7 +51,7 @@ func ReadAll(c *gin.Context) {
 		return
 	}
 
-	readingRecords := []types.Record{}
+	readingRecords := []hangle.Record{}
 
 	logrus.Debug("Scan table for record struct")
 	db.Preload("Word").Preload("User").Find(&readingRecords)

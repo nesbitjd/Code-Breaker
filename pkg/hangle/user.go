@@ -35,22 +35,20 @@ func (c *Client) PostUser(u User) (User, error) {
 	if err != nil {
 		return User{}, fmt.Errorf("unable to do http request: %w", err)
 	}
-
-	bytes, err := readRespBody(resp)
-	if err != nil {
-		return User{}, fmt.Errorf("received invalid response: %w", err)
-	}
-
 	if resp.StatusCode != http.StatusCreated {
-		return User{}, fmt.Errorf("error doing request: %s: %s", resp.Status, string(bytes))
+		body, err := readRespBody(resp)
+		if err != nil {
+			return User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return User{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	respUser := User{}
-	err = json.Unmarshal(bytes, &respUser)
+	respUser := &User{}
+	err = readAndUnmarshalRespBody(resp, respUser)
 	if err != nil {
 		return User{}, fmt.Errorf("received invalid response: %w", err)
 	}
-	return respUser, nil
+	return *respUser, nil
 }
 
 // PutUser performs an API request to update the given user
@@ -70,20 +68,19 @@ func (c *Client) PutUser(u User, id string) (User, error) {
 		return User{}, fmt.Errorf("unable to do http request: %w", err)
 	}
 	if resp.StatusCode != http.StatusCreated {
-		return User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return User{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respUser := &User{}
+	err = readAndUnmarshalRespBody(resp, respUser)
 	if err != nil {
 		return User{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respUser := User{}
-	err = json.Unmarshal(bytes, &respUser)
-	if err != nil {
-		return User{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respUser, nil
+	return *respUser, nil
 }
 
 // GetAllUsers performs an API request to retrieve all users
@@ -93,19 +90,19 @@ func (c *Client) GetAllUsers() ([]User, error) {
 		return []User{}, fmt.Errorf("unable to do request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return []User{}, fmt.Errorf("error doing request: %s", resp.Status)
-	}
-
-	bytes, err := readRespBody(resp)
-	if err != nil {
-		return []User{}, fmt.Errorf("received invalid response: %w", err)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return []User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return []User{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
 	respUser := []User{}
-	err = json.Unmarshal(bytes, &respUser)
+	err = readAndUnmarshalRespBody(resp, &respUser)
 	if err != nil {
 		return []User{}, fmt.Errorf("received invalid response: %w", err)
 	}
+
 	return respUser, nil
 }
 
@@ -120,20 +117,19 @@ func (c *Client) GetUser(id string) (User, error) {
 		return User{}, fmt.Errorf("unable to do request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return User{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respUser := &User{}
+	err = readAndUnmarshalRespBody(resp, respUser)
 	if err != nil {
 		return User{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respUser := User{}
-	err = json.Unmarshal(bytes, &respUser)
-	if err != nil {
-		return User{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respUser, nil
+	return *respUser, nil
 }
 
 // DeleteUser performs an API request to delete the given User
@@ -147,18 +143,17 @@ func (c *Client) DeleteUser(id string) (User, error) {
 		return User{}, fmt.Errorf("unable to do request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return User{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return User{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respUser := &User{}
+	err = readAndUnmarshalRespBody(resp, respUser)
 	if err != nil {
 		return User{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respUser := User{}
-	err = json.Unmarshal(bytes, &respUser)
-	if err != nil {
-		return User{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respUser, nil
+	return *respUser, nil
 }

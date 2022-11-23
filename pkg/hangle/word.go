@@ -35,20 +35,19 @@ func (c *Client) PostWord(w Word) (Word, error) {
 		return Word{}, fmt.Errorf("unable to do http request: %w", err)
 	}
 	if resp.StatusCode != http.StatusCreated {
-		return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Word{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respWord := &Word{}
+	err = readAndUnmarshalRespBody(resp, respWord)
 	if err != nil {
 		return Word{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respWord := Word{}
-	err = json.Unmarshal(bytes, &respWord)
-	if err != nil {
-		return Word{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respWord, nil
+	return *respWord, nil
 }
 
 // PutWord performs an API request to update the given word
@@ -66,20 +65,19 @@ func (c *Client) PutWord(w Word, id string) (Word, error) {
 		return Word{}, fmt.Errorf("unable to do http request: %w", err)
 	}
 	if resp.StatusCode != http.StatusCreated {
-		return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Word{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respWord := &Word{}
+	err = readAndUnmarshalRespBody(resp, respWord)
 	if err != nil {
 		return Word{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respWord := Word{}
-	err = json.Unmarshal(bytes, &respWord)
-	if err != nil {
-		return Word{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respWord, nil
+	return *respWord, nil
 }
 
 // GetWord performs an API request to retrieve the given word
@@ -93,41 +91,39 @@ func (c *Client) GetWord(id string) (Word, error) {
 		return Word{}, fmt.Errorf("unable to do request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Word{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respWord := &Word{}
+	err = readAndUnmarshalRespBody(resp, respWord)
 	if err != nil {
 		return Word{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respWord := Word{}
-	err = json.Unmarshal(bytes, &respWord)
-	if err != nil {
-		return Word{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respWord, nil
+	return *respWord, nil
 }
 
 // GetAllWords performs an API request to retrieve all Words
-func (c *Client) GetAllWords() (Word, error) {
+func (c *Client) GetAllWords() ([]Word, error) {
 	resp, err := c.DoHttp(http.MethodGet, wordPath, nil)
 	if err != nil {
-		return Word{}, fmt.Errorf("unable to do request: %w", err)
+		return []Word{}, fmt.Errorf("unable to do request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return []Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return []Word{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respWord := []Word{}
+	err = readAndUnmarshalRespBody(resp, respWord)
 	if err != nil {
-		return Word{}, fmt.Errorf("received invalid response: %w", err)
-	}
-
-	respWord := Word{}
-	err = json.Unmarshal(bytes, &respWord)
-	if err != nil {
-		return Word{}, fmt.Errorf("received invalid response: %w", err)
+		return []Word{}, fmt.Errorf("received invalid response: %w", err)
 	}
 	return respWord, nil
 }
@@ -144,20 +140,19 @@ func (c *Client) GetLastWord() (Word, error) {
 		return Word{}, fmt.Errorf("unable to do request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Word{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respWord := &Word{}
+	err = readAndUnmarshalRespBody(resp, respWord)
 	if err != nil {
 		return Word{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respWord := Word{}
-	err = json.Unmarshal(bytes, &respWord)
-	if err != nil {
-		return Word{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respWord, nil
+	return *respWord, nil
 }
 
 // DeleteWord performs an API request to delete the given word
@@ -172,18 +167,17 @@ func (c *Client) DeleteWord(id string) (Word, error) {
 		return Word{}, fmt.Errorf("unable to do request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Word{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Word{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respWord := &Word{}
+	err = readAndUnmarshalRespBody(resp, respWord)
 	if err != nil {
 		return Word{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respWord := Word{}
-	err = json.Unmarshal(bytes, &respWord)
-	if err != nil {
-		return Word{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respWord, nil
+	return *respWord, nil
 }

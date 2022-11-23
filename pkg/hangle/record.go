@@ -43,20 +43,19 @@ func (c *Client) PostRecord(r Record) (Record, error) {
 		return Record{}, fmt.Errorf("unable to do http request: %w", err)
 	}
 	if resp.StatusCode != http.StatusCreated {
-		return Record{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Record{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Record{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respRecord := &Record{}
+	err = readAndUnmarshalRespBody(resp, respRecord)
 	if err != nil {
 		return Record{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respRecord := Record{}
-	err = json.Unmarshal(bytes, &respRecord)
-	if err != nil {
-		return Record{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respRecord, nil
+	return *respRecord, nil
 }
 
 // PutRecord performs an API request to update the given record
@@ -74,20 +73,19 @@ func (c *Client) PutRecord(r Record, id string) (Record, error) {
 		return Record{}, fmt.Errorf("unable to do http request: %w", err)
 	}
 	if resp.StatusCode != http.StatusCreated {
-		return Record{}, fmt.Errorf("error doing request: %s", resp.Status)
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Record{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Record{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respRecord := &Record{}
+	err = readAndUnmarshalRespBody(resp, respRecord)
 	if err != nil {
 		return Record{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respRecord := Record{}
-	err = json.Unmarshal(bytes, &respRecord)
-	if err != nil {
-		return Record{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respRecord, nil
+	return *respRecord, nil
 }
 
 // GetRecord performs an API request to retrieve the given record
@@ -100,36 +98,40 @@ func (c *Client) GetRecord(id string) (Record, error) {
 	if err != nil {
 		return Record{}, fmt.Errorf("unable to do request: %w", err)
 	}
+	if resp.StatusCode != http.StatusOK {
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Record{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Record{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
+	}
 
-	bytes, err := readRespBody(resp)
+	respRecord := &Record{}
+	err = readAndUnmarshalRespBody(resp, respRecord)
 	if err != nil {
 		return Record{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respRecord := Record{}
-	err = json.Unmarshal(bytes, &respRecord)
-	if err != nil {
-		return Record{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respRecord, nil
+	return *respRecord, nil
 }
 
 // GetAllRecords performs an API request to retrieve all users
-func (c *Client) GetAllRecords(id string) (Record, error) {
+func (c *Client) GetAllRecords(id string) ([]Record, error) {
 	resp, err := c.DoHttp(http.MethodGet, recordPath, nil)
 	if err != nil {
-		return Record{}, fmt.Errorf("unable to do request: %w", err)
+		return []Record{}, fmt.Errorf("unable to do request: %w", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		body, err := readRespBody(resp)
+		if err != nil {
+			return []Record{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return []Record{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
 	}
 
-	bytes, err := readRespBody(resp)
+	respRecord := []Record{}
+	err = readAndUnmarshalRespBody(resp, respRecord)
 	if err != nil {
-		return Record{}, fmt.Errorf("received invalid response: %w", err)
-	}
-
-	respRecord := Record{}
-	err = json.Unmarshal(bytes, &respRecord)
-	if err != nil {
-		return Record{}, fmt.Errorf("received invalid response: %w", err)
+		return []Record{}, fmt.Errorf("received invalid response: %w", err)
 	}
 	return respRecord, nil
 }
@@ -144,16 +146,18 @@ func (c *Client) DeleteRecord(id string) (Record, error) {
 	if err != nil {
 		return Record{}, fmt.Errorf("unable to do request: %w", err)
 	}
+	if resp.StatusCode != http.StatusOK {
+		body, err := readRespBody(resp)
+		if err != nil {
+			return Record{}, fmt.Errorf("error doing request: %s", resp.Status)
+		}
+		return Record{}, fmt.Errorf("error doing request: %s: %s", resp.Status, body)
+	}
 
-	bytes, err := readRespBody(resp)
+	respRecord := &Record{}
+	err = readAndUnmarshalRespBody(resp, respRecord)
 	if err != nil {
 		return Record{}, fmt.Errorf("received invalid response: %w", err)
 	}
-
-	respRecord := Record{}
-	err = json.Unmarshal(bytes, &respRecord)
-	if err != nil {
-		return Record{}, fmt.Errorf("received invalid response: %w", err)
-	}
-	return respRecord, nil
+	return *respRecord, nil
 }

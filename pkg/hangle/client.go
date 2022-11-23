@@ -2,10 +2,13 @@ package hangle
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/sirupsen/logrus"
 )
 
 var apiBase = "api/v1"
@@ -60,7 +63,20 @@ func (c *Client) DoHttp(method string, endpoint string, data []byte) (*http.Resp
 func readRespBody(resp *http.Response) ([]byte, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return []byte{}, fmt.Errorf("unable to read user body: %w", err)
+		return nil, fmt.Errorf("unable to read resp body: %w", err)
 	}
 	return body, nil
+}
+
+func readAndUnmarshalRespBody(resp *http.Response, v any) error {
+	body, err := readRespBody(resp)
+	if err != nil {
+		return err
+	}
+	logrus.Warnf("body: %s", string(body))
+	err = json.Unmarshal(body, v)
+	if err != nil {
+		return fmt.Errorf("unable to unmarshal resp body: %w", err)
+	}
+	return nil
 }

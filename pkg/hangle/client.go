@@ -1,15 +1,14 @@
-package types
+package hangle
 
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 )
 
-var (
-	apiBase = "api/v1"
-)
+var apiBase = "api/v1"
 
 type Config struct {
 	ServerAddr string
@@ -51,9 +50,17 @@ func (c *Client) DoHttp(method string, endpoint string, data []byte) (*http.Resp
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	resp, err := c.Http.Do(req)
 	if err != nil {
-		return &http.Response{}, fmt.Errorf("error from sending request: %w", err)
+		return &http.Response{}, fmt.Errorf("unable to do request: %w", err)
 
 	}
 
 	return resp, nil
+}
+
+func readRespBody(resp *http.Response) ([]byte, error) {
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []byte{}, fmt.Errorf("unable to read user body: %w", err)
+	}
+	return body, nil
 }

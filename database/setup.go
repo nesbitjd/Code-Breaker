@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
@@ -27,7 +27,7 @@ func Setup() error {
 	}
 
 	logrus.Debug("Automigrating database")
-	err = db.AutoMigrate(&types.User{}, &types.Word{}, &types.Record{})
+	err = db.AutoMigrate(&hangle.User{}, &hangle.Word{}, &hangle.Record{})
 	if err != nil {
 		return fmt.Errorf("unable to automigrate: %w", err)
 	}

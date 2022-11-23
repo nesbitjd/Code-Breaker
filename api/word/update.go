@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -23,7 +23,7 @@ func Update(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	word := &types.Word{}
+	word := &hangle.Word{}
 
 	logrus.Trace("Binding requested id to word struct")
 	err = c.Bind(word)
@@ -35,7 +35,7 @@ func Update(c *gin.Context) {
 	}
 
 	logrus.Debug("Scan table for database entry and update word struct")
-	db.Model(&types.Word{}).Where("id = ?", id).Updates(word)
+	db.Model(&hangle.Word{}).Where("id = ?", id).Updates(word)
 
 	resp := fmt.Sprintf("updated entry %+v", word.Word)
 	c.JSON(http.StatusCreated, resp)

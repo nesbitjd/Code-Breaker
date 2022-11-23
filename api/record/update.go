@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/nesbitjd/hangle_server/database"
-	"github.com/nesbitjd/hangle_server/types"
+	"github.com/nesbitjd/hangle_server/pkg/hangle"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -23,7 +23,7 @@ func Update(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	record := &types.Record{}
+	record := &hangle.Record{}
 
 	logrus.Trace("Binding requested id to record type")
 	err = c.Bind(record)
@@ -35,7 +35,7 @@ func Update(c *gin.Context) {
 	}
 
 	logrus.Debug("Scan table for database entry and update record struct")
-	db.Model(&types.Record{}).Where("id = ?", id).Updates(record)
+	db.Model(&hangle.Record{}).Where("id = ?", id).Updates(record)
 
 	resp := fmt.Sprintf("updated entry %+v", record.Word)
 	c.JSON(http.StatusCreated, resp)

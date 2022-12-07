@@ -7,8 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-
-	"github.com/sirupsen/logrus"
 )
 
 var apiBase = "api/v1"
@@ -73,7 +71,6 @@ func readAndUnmarshalRespBody(resp *http.Response, v any) error {
 	if err != nil {
 		return err
 	}
-	logrus.Warnf("body: %s", string(body))
 	err = json.Unmarshal(body, v)
 	if err != nil {
 		return fmt.Errorf("unable to unmarshal resp body: %w", err)

@@ -152,6 +152,9 @@ func (c *Client) GetLastWord() (Word, error) {
 	if err != nil {
 		return Word{}, fmt.Errorf("received invalid response: %w", err)
 	}
+	if respWord.Word == "" {
+		return Word{}, fmt.Errorf("no words defined")
+	}
 	return *respWord, nil
 }
 
